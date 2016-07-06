@@ -8,7 +8,7 @@ from StringIO import StringIO
 from openerp import api, models
 
 _logger = logging.getLogger(__name__)
-_marker_phrase = '[[waiting for OCR]]'
+_MARKER_PHRASE = '[[waiting for OCR]]'
 
 
 class IrAttachment(models.Model):
@@ -25,7 +25,7 @@ class IrAttachment(models.Model):
                 content = self._index_ocr(mimetype, data, datas_fname,
                                           file_type)
             else:
-                content = _marker_phrase
+                content = _MARKER_PHRASE
 
         return mimetype, content
 
@@ -71,7 +71,7 @@ class IrAttachment(models.Model):
     @api.model
     def _ocr_cron(self):
         for this in self.with_context(document_ocr_force=True).search([
-            ('index_content', '=', _marker_phrase),
+            ('index_content', '=', _MARKER_PHRASE),
         ]):
             if not this.datas:
                 continue
