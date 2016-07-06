@@ -4,7 +4,7 @@
 from PIL import Image, ImageDraw, ImageFont
 from StringIO import StringIO
 from openerp.tests.common import TransactionCase
-from openerp.addons.document_ocr.models.ir_attachment import _marker_phrase
+from openerp.addons.document_ocr.models.ir_attachment import _MARKER_PHRASE
 
 
 class TestDocumentOcr(TransactionCase):
