@@ -34,7 +34,10 @@ To configure this module, go to:
 Usage
 =====
 
-By default, character recognition is done asynchronously by a cronjob at night. This is because the recognition process takes a while and you don't want to make your users wait for the indexation to finish. If you want to force that nonetheless, set configuration parameter ``document_ocr.synchronous`` to value ``True``.
+By default, character recognition is done asynchronously by a cronjob at night. 
+This is because the recognition process takes a while and you don't want to make your users wait for the indexation to finish.
+The interval to run the cronjob can be adjusted to your needs in the ``Scheduled Actions`` menu, under ` `Settings``.
+In case you want to force the OCR to be done immediately, set configuration parameter ``document_ocr.synchronous`` to value ``True``.
 
 .. image:: https://odoo-community.org/website/image/ir.attachment/5784_f2813bd/datas
     :alt: Try me on Runbot
