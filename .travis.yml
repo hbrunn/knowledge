@@ -9,7 +9,7 @@ addons:
       - python-lxml # because pip installation is slow
       - tesseract-ocr # document_ocr
       - imagemagick # document_ocr
-      - fonts-inconsolata # document_ocr
+      - fonts-inconsolata # document_ocr (for tests only)
 
 language: python
 
