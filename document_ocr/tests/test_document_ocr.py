@@ -34,7 +34,7 @@ class TestDocumentOcr(TransactionCase):
             'name': 'testattachment',
             'datas': data.getvalue().encode('base64'),
         })
-        self.assertEqual(attachment.index_content, _marker_phrase)
+        self.assertEqual(attachment.index_content, _MARKER_PHRASE)
         attachment._ocr_cron()
         self.assertEqual(attachment.index_content.strip(), 'Hello world')
         # and for an unreadable image, we expect an error
