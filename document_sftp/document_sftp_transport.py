@@ -5,6 +5,9 @@ try:
     from paramiko import Transport
     from paramiko.transport import DEFAULT_WINDOW_SIZE, DEFAULT_MAX_PACKET_SIZE
 except ImportError:
+    DEFAULT_WINDOW_SIZE = 0
+    DEFAULT_MAX_PACKET_SIZE = 0
+    Transport = object
     pass
 from openerp import api, SUPERUSER_ID
 from openerp.modules.registry import RegistryManager
