@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# © 2016 Therp BV <http://therp.nl>
+# Copyright 2016-2018 Therp BV <http://therp.nl>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 from paramiko import AUTH_SUCCESSFUL, AUTH_FAILED,\
     OPEN_FAILED_ADMINISTRATIVELY_PROHIBITED, OPEN_SUCCEEDED,\
@@ -10,10 +10,14 @@ from openerp.exceptions import AccessDenied
 
 class DocumentSFTPServer(ServerInterface):
     def __init__(self, env):
+        import pdb
+        pdb.set_trace()
         self.env = env
         super(DocumentSFTPServer, self).__init__()
 
     def check_auth_password(self, username, password):
+        import pdb
+        pdb.set_trace()
         try:
             user = self.env['res.users'].search([('login', '=', username)])
             if not user:
@@ -26,6 +30,8 @@ class DocumentSFTPServer(ServerInterface):
         return AUTH_FAILED
 
     def check_auth_publickey(self, username, key):
+        import pdb
+        pdb.set_trace()
         user = self.env['res.users'].search([('login', '=', username)])
         if not user:
             return AUTH_FAILED

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# © 2016 Therp BV <http://therp.nl>
+# Copyright 2016-2018 Therp BV <http://therp.nl>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 import os
 from openerp import api, models, exceptions
@@ -9,7 +9,7 @@ except ImportError:   # pragma: no cover
     pass
 
 
-class DocumentSFTPRootByModel(models.Model):
+class DocumentSFTPRootByModel(models.AbstractModel):
     _inherit = 'document.sftp.root'
     _name = 'document.sftp.root.by_model'
     _virtual_root = 'By model'

@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
-# © 2016 Therp BV <http://therp.nl>
+# Copyright 2016-2018 Therp BV <http://therp.nl>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 import logging
 import socket
 import StringIO
 import threading
-from openerp import SUPERUSER_ID, api, models
+from lxml import etree
+from openerp import SUPERUSER_ID, api, models, tools
 from openerp.modules.registry import RegistryManager
 try:
     import paramiko
+    from paramiko.ecdsakey import ECDSAKey
     from ..document_sftp_transport import DocumentSFTPTransport
     from ..document_sftp_server import DocumentSFTPServer
     from ..document_sftp_sftp_server import DocumentSFTPSftpServerInterface,\
@@ -25,8 +27,11 @@ class DocumentSFTP(models.AbstractModel):
     _description = 'SFTP server'
 
     def _run_server(self, dbname, stop):
+        import pdb
+        pdb.set_trace()
         with api.Environment.manage():
-            with RegistryManager.get(dbname).cursor() as cr:
+            registry = RegistryManager.get(dbname)
+            with registry._db.cursor() as cr:
                 env = api.Environment(cr, SUPERUSER_ID, {})
                 env[self._name].__run_server(stop)
 
@@ -98,15 +103,39 @@ class DocumentSFTP(models.AbstractModel):
         # TODO: this can be smarter
         return self.env['document.sftp.root.by_model']
 
-    def _register_hook(self, cr):
-        if cr.dbname not in _db2thread:
+    @api.model
+    def _generate_host_key(self):
+        hostkey = self.env['ir.config_parameter'].get_param(
+            'document_sftp.hostkey'
+        )
+        parameters = etree.parse(
+            tools.file_open('document_sftp/data/ir_config_parameter.xml')
+        )
+        default_value = None
+        for node in parameters.xpath(
+                "//record[@id='param_hostkey']//field[@name='value']"
+        ):
+            default_value = node.text
+        if not hostkey or hostkey == default_value:
+            _logger.info(
+                'Generating host key for database %s', self.env.cr.dbname,
+            )
+            key = StringIO.StringIO()
+            ECDSAKey.generate().write_private_key(key)
+            self.env['ir.config_parameter'].set_param(
+                'document_sftp.hostkey', key.getvalue()
+            )
+            key.close()
+
+    def _register_hook(self):
+        if self.env.cr.dbname not in _db2thread:
             stop = threading.Event()
-            _db2thread[cr.dbname] = (
+            _db2thread[self.env.cr.dbname] = (
                 threading.Thread(
-                    target=self._run_server, args=(cr.dbname, stop)),
+                    target=self._run_server, args=(self.env.cr.dbname, stop)),
                 stop,
             )
-            _db2thread[cr.dbname][0].start()
+            _db2thread[self.env.cr.dbname][0].start()
             from openerp.service.server import server
             old_stop = server.stop
 
@@ -115,4 +144,4 @@ class DocumentSFTP(models.AbstractModel):
                 old_stop()
 
             server.stop = new_stop
-        return super(DocumentSFTP, self)._register_hook(cr)
+        return super(DocumentSFTP, self)._register_hook()

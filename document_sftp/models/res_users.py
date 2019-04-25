@@ -11,8 +11,8 @@ class ResUsers(models.Model):
         'Authorized keys',
         help='An authorized key file as in ~/.ssh/authorized_keys')
 
-    def _register_hook(self, cr):
+    def _register_hook(self):
         if 'authorized_keys' not in self.SELF_WRITEABLE_FIELDS:
             self.SELF_WRITEABLE_FIELDS.append('authorized_keys')
             self.SELF_READABLE_FIELDS.append('authorized_keys')
-        return super(ResUsers, self)._register_hook(cr)
+        return super(ResUsers, self)._register_hook()
